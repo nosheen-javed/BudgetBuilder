@@ -82,7 +82,13 @@
 
       </ng-container>
 
-
+ <tr class="font-bold bg-blue-950 text-white">
+        <td class="border p-2">Income Total</td>
+        <td *ngFor="let mi of months().keys()" class="border p-2 text-right">
+          {{ totalIncome(mi) }}
+        </td>
+        <td class="p-2 border"></td>
+      </tr>
       
 
       <tr>

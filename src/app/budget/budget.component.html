@@ -1,0 +1,190 @@
+
+
+  <table class="w-full border-collapse text-sm">
+    <thead>
+      <tr class="border">
+        <th class="border p-2 w-64 text-left">
+            <div class="flex gap-4 mb-6 items-center">
+    <div>
+      <label class="block text-sm font-semibold">Start Period</label>
+      <input type="month"
+             class="border p-2 rounded"
+             (change)="onStartChange($event)"
+             [value]="startMonth()" />
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold">End Period</label>
+      <input type="month"
+             class="border p-2 rounded"
+             (change)="onEndChange($event)"
+             [value]="endMonth()" />
+    </div>
+  </div>
+
+        </th>
+        <th *ngFor="let m of months()" class="border p-2 font-semibold text-center">
+          {{ m.label }}
+        </th>
+        <th class="border" style="width:100px"></th>
+      </tr>
+    </thead>
+     <tbody>
+
+      <tr>
+        <td [attr.colspan]="months().length -2" class="font-bold p-2">Income</td>
+        <td [attr.colspan]="4" class="text-right p-2">   <button type="button" class="bg-blue-950 text-white p-2 rounded-sm cursor-pointer" (click)="addIncomeParent()"> Add New Income Parent Category</button></td>
+    </tr>
+
+      <ng-container *ngFor="let parent of incomeCategories(); let pi = index">
+
+        <!-- Parent Category Title -->
+        <tr class="bg-gray-100">
+          <td [attr.colspan]="months().length - 2" class=" font-semibold p-2"> 
+            <input type="text" class="w-full p-2" [value]="parent.name()" placeholder="Enter Income Parent Catgeory" (keyup.enter)="updateParentValue('income', pi, $event)" autofocus/></td>
+             <td [attr.colspan]="4"
+              class="p-2 cursor-pointer text-right"
+              >
+              <button type="button" class="bg-sky-400 text-white p-2 rounded-sm" (click)="addIncomeSub(pi)" *ngIf="parent.name() !== ''">  Add a new {{ parent.name() }} Sub-Category</button>
+          
+          </td>
+        </tr>
+
+        <!-- Sub categories -->
+        <tr *ngFor="let sub of parent.items; let si = index">
+          <td class="border pl-6 p-2" >
+        <input type="text" class="w-full p-2 focus:bg-yellow-50 outline-none" [value]="sub.name()" autofocus (keyup.enter)="updateSubValue('income', pi , si, $event)"/>
+
+          </td>
+
+          <!-- Editable Month Cells -->
+          <td *ngFor="let m of months(); let mi = index"
+              class="border p-0">
+
+            <input type="number"
+                   class="w-full p-2 focus:bg-yellow-50 outline-none text-right"
+                   [value]="sub.values[mi]()"
+                   (input)="updateValue('income', pi, si, mi, $event)" #myInput (contextmenu)="onRightClick('income', $event , pi , si, sub.values[mi]())"/>
+
+          </td>
+            <td class="border text-center" style="width:100px">  <button type="button" class="bg-red-900 text-white p-2 rounded-sm" (click)="removeSubValue('income', pi , si, $event)">  Delete</button> </td>
+        </tr>
+
+        <!-- Subtotal Row -->
+        <tr class="bg-gray-50 font-semibold">
+          <td class="border p-2 pr-4 pl-4">Sub Total</td>
+          <td *ngFor="let mi of months().keys()" class="border p-2 text-right pr-4 pl-4">
+            {{ incomeSubTotal(parent, mi) }}
+          </td>
+          <td  class="border p-2"></td>
+        </tr>
+
+
+      </ng-container>
+
+
+      
+
+      <tr>
+        <td [attr.colspan]="months().length -2" class="font-bold p-2">Expenses</td>
+        <td [attr.colspan]="4" class="text-right p-2">
+                  <button type="button" class="bg-blue-950 text-white p-2 rounded-sm cursor-pointer" (click)="addExpenseParent()"> Add New Expense Parent Category</button>
+
+        </td>
+    </tr>
+
+      <ng-container *ngFor="let parent of expenseCategories(); let ec = index">
+
+
+
+           <tr class="bg-gray-100">
+          <td [attr.colspan]="months().length - 2" class=" font-semibold p-2"> 
+            <input type="text" class="w-full p-2" [value]="parent.name()" placeholder="Enter Expense Parent Catgeory" (keyup.enter)="updateParentValue('expense', ec, $event)" autofocus/></td>
+             <td [attr.colspan]="4"
+              class="p-2 cursor-pointer text-right"
+              >
+              <button type="button" class="bg-sky-400 text-white p-2 rounded-sm" (click)="addExpenseSub(ec)" *ngIf="parent.name() !== ''">  Add a new {{ parent.name() }} Sub-Category</button>
+          
+          </td>
+        </tr>
+
+
+        <tr *ngFor="let sub of parent.items; let subIndex = index">
+         <td class="border pl-6 p-2">
+        <input type="text" class="w-full p-2 focus:bg-yellow-50 outline-none" [value]="sub.name()" autofocus (keyup.enter)="updateSubValue('expense', ec, subIndex, $event)"/>
+
+          </td>
+
+          <td *ngFor="let m of months(); let monthIndex = index"
+              class="border p-0" >
+            <input type="number"
+                   class="w-full p-2 focus:bg-yellow-50 text-right"
+                   [value]="sub.values[monthIndex]()"
+                   (input)="updateValue('expense', ec, subIndex, monthIndex, $event)" #myInput (contextmenu)="onRightClick('expense', $event , ec , subIndex, sub.values[monthIndex]())" />
+          </td>
+           <td class="border text-center" style="width:100px">  <button type="button" class="bg-red-900 text-white p-2 rounded-sm" (click)="removeSubValue('expense', ec , subIndex, $event)">  Delete</button> </td>
+        </tr>
+
+        <!-- Subtotal -->
+        <tr class="bg-gray-50 font-semibold">
+          <td class="border p-2 pr-4 pl-4">Sub Total</td>
+          <td *ngFor="let month of months().keys()" class="border p-2 text-right pr-4 pl-4">
+            {{ expenseSubTotal(parent, month) }}
+          </td>
+          <td class="p-2 border"></td>
+        </tr>
+
+     
+      </ng-container>
+
+      <!-- Totals -->
+      <tr class="font-bold bg-blue-950 text-white">
+        <td class="border p-2">Total Expenses</td>
+        <td *ngFor="let mi of months().keys()" class="border p-2 text-right pr-4 pl-4">
+          {{ totalExpenses(mi) }}
+        </td>
+        <td  class="border p-2"></td>
+      </tr>
+
+      <!-- Profit / Loss -->
+      <tr class="font-bold">
+        <td class="border p-2">Profit / Loss</td>
+        <td *ngFor="let mi of months().keys()" class="border p-2 text-right pr-4 pl-4" [ngClass]="profitLoss(mi) < 0 ? 'text-red-600' : 'text-green-600'">
+        
+          {{ profitLoss(mi) }}
+        </td>
+        <td  class="border p-2"></td>
+      </tr>
+
+      <!-- Opening balance -->
+      <tr>
+        <td class="border p-2 font-semibold">Opening Balance</td>
+        <td *ngFor="let mi of months().keys()" class="border p-2 text-right pr-4 pl-4">
+          {{ openingBalance(mi) }}
+        </td>
+        <td  class="border p-2"></td>
+      </tr>
+
+      <!-- Closing balance -->
+      <tr class="font-bold">
+        <td class="border p-2">Closing Balance</td>
+        <td *ngFor="let mi of months().keys()" class="border p-2 text-right pr-4 pl-4">
+          {{ closingBalance(mi) }}
+        </td>
+        <td  class="border p-2"></td>
+      </tr>
+
+
+
+     </tbody>
+    </table>
+
+     <div *ngIf="showContextMenu" 
+     [style.left.px]="contextMenuPosition.x" 
+     [style.top.px]="contextMenuPosition.y" 
+     class="custom-context-menu"> 
+      <!-- Add your popup content here -->
+      <ul>
+        <li (click)="applyAll()">Apply to all</li>
+      </ul>
+    </div>

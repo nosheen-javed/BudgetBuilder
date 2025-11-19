@@ -1,1 +1,33 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+body{
+    font-family: 'Inter';
+    font-size: 1rem;
+}
+table tr th, table tr td{
+    border-color: #ccc;
+}
+ .custom-context-menu {
+  position: fixed;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 5px 0;
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.custom-context-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.custom-context-menu li {
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.custom-context-menu li:hover {
+  background-color: #f0f0f0;
+}
